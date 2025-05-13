@@ -22,10 +22,10 @@ class DashboardController extends Controller
         $reservationsCount = Reservation::where('user_id', $user->id)->count();
         $ordersCount = Order::where('user_id', $user->id)->count();
 
-        // Get recent reservations for the dashboard
+        // Get recent reservations for the dashboard - FIX: Change column names
         $recentReservations = Reservation::where('user_id', $user->id)
-            ->orderBy('date', 'desc')
-            ->orderBy('time', 'desc')
+            ->orderBy('reservation_date', 'desc')
+            ->orderBy('reservation_time', 'desc')
             ->limit(5)
             ->get();
 
@@ -67,16 +67,20 @@ class DashboardController extends Controller
         $validated = $request->validate([
             'reservation_date' => 'required|date|after:today',
             'reservation_time' => 'required',
-            'guests' => 'required|integer|min:1|max:20',
-            'notes' => 'nullable|string|max:500',
+            'party_size' => 'required|integer|min:1|max:20',
+            'special_requests' => 'nullable|string|max:500',
         ]);
 
         $reservation = new Reservation();
         $reservation->user_id = Auth::id();
+        $reservation->name = Auth::user()->name;
+        $reservation->email = Auth::user()->email;
+        $reservation->phone = Auth::user()->phone ?? '';
         $reservation->reservation_date = $validated['reservation_date'];
         $reservation->reservation_time = $validated['reservation_time'];
-        $reservation->guests = $validated['guests'];
-        $reservation->notes = $validated['notes'] ?? null;
+        $reservation->party_size = $validated['party_size'];
+        $reservation->special_requests = $validated['special_requests'] ?? null;
+        $reservation->notes = $validated['special_requests'] ?? ''; // Add this line to set notes field
         $reservation->status = 'pending';
         $reservation->save();
 
@@ -122,8 +126,8 @@ class DashboardController extends Controller
         $validated = $request->validate([
             'reservation_date' => 'required|date|after:today',
             'reservation_time' => 'required',
-            'guests' => 'required|integer|min:1|max:20',
-            'notes' => 'nullable|string|max:500',
+            'party_size' => 'required|integer|min:1|max:20',
+            'special_requests' => 'nullable|string|max:500',
         ]);
 
         $reservation->update($validated);
@@ -143,6 +147,23 @@ class DashboardController extends Controller
         $this->authorizeReservation($reservation);
 
         $reservation->delete();
+
+        return redirect()->route('dashboard.reservations')
+            ->with('success', 'Reservation cancelled successfully!');
+    }
+
+    /**
+     * Cancel a reservation.
+     *
+     * @param  \App\Models\Reservation  $reservation
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function cancelReservation(Reservation $reservation)
+    {
+        $this->authorizeReservation($reservation);
+
+        $reservation->status = 'cancelled';
+        $reservation->save();
 
         return redirect()->route('dashboard.reservations')
             ->with('success', 'Reservation cancelled successfully!');

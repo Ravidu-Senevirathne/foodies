@@ -37,8 +37,12 @@ class ReservationController extends Controller
             'notes' => ['nullable', 'string', 'max:500'],
         ]);
 
-        $reservation = new Reservation($validated);
+        $reservation = new Reservation();
         $reservation->user_id = Auth::id();
+        $reservation->reservation_date = $validated['date']; // Map to correct field name
+        $reservation->reservation_time = $validated['time']; // Map to correct field name
+        $reservation->guests = $validated['guests'];
+        $reservation->notes = $validated['notes'] ?? null;
         $reservation->status = 'pending';
         $reservation->save();
 
@@ -88,7 +92,12 @@ class ReservationController extends Controller
             'notes' => ['nullable', 'string', 'max:500'],
         ]);
 
-        $reservation->update($validated);
+        // Map the fields correctly to the database column names
+        $reservation->reservation_date = $validated['date'];
+        $reservation->reservation_time = $validated['time'];
+        $reservation->guests = $validated['guests'];
+        $reservation->notes = $validated['notes'] ?? null;
+        $reservation->save();
 
         return redirect()->route('reservations.index')->with('success', 'Reservation updated successfully');
     }

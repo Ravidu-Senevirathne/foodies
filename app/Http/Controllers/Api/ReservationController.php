@@ -31,14 +31,21 @@ class ReservationController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
             'phone' => 'required|string|max:20',
-            'date' => 'required|date|after:today',
-            'time' => 'required',
+            'reservation_date' => 'required|date|after:today',
+            'reservation_time' => 'required',
             'party_size' => 'required|integer|min:1',
             'special_requests' => 'nullable|string',
         ]);
 
-        $reservation = new Reservation($request->all());
+        $reservation = new Reservation();
         $reservation->user_id = $request->user()->id;
+        $reservation->name = $request->name;
+        $reservation->email = $request->email;
+        $reservation->phone = $request->phone;
+        $reservation->reservation_date = $request->reservation_date;
+        $reservation->reservation_time = $request->reservation_time;
+        $reservation->party_size = $request->party_size;
+        $reservation->special_requests = $request->special_requests;
         $reservation->status = 'pending';
         $reservation->save();
 
@@ -76,18 +83,31 @@ class ReservationController extends Controller
             'name' => 'sometimes|string|max:255',
             'email' => 'sometimes|email|max:255',
             'phone' => 'sometimes|string|max:20',
-            'date' => 'sometimes|date|after:today',
-            'time' => 'sometimes',
+            'reservation_date' => 'sometimes|date|after:today',
+            'reservation_time' => 'sometimes',
             'party_size' => 'sometimes|integer|min:1',
             'special_requests' => 'nullable|string',
         ]);
 
         // Only admins can update status and admin notes
         if ($request->user()->isAdmin()) {
-            $reservation->update($request->all());
+            if ($request->has('reservation_date')) {
+                $reservation->reservation_date = $request->reservation_date;
+            }
+            if ($request->has('reservation_time')) {
+                $reservation->reservation_time = $request->reservation_time;
+            }
+            // Update other fields as needed
+            $reservation->save();
         } else {
             // If user updates their reservation, set status back to pending
-            $reservation->update($request->except(['status', 'admin_notes']));
+            if ($request->has('reservation_date')) {
+                $reservation->reservation_date = $request->reservation_date;
+            }
+            if ($request->has('reservation_time')) {
+                $reservation->reservation_time = $request->reservation_time;
+            }
+            // Update other fields
             $reservation->status = 'pending';
             $reservation->save();
         }

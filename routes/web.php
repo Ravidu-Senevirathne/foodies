@@ -20,6 +20,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard/reservations/{reservation}/edit', [DashboardController::class, 'editReservation'])->name('dashboard.reservations.edit');
     Route::put('/dashboard/reservations/{reservation}', [DashboardController::class, 'updateReservation'])->name('dashboard.reservations.update');
     Route::delete('/dashboard/reservations/{reservation}', [DashboardController::class, 'deleteReservation'])->name('dashboard.reservations.delete');
+    Route::patch('/dashboard/reservations/{reservation}/cancel', [DashboardController::class, 'cancelReservation'])->name('dashboard.reservations.cancel');
 
     // Orders
     Route::get('/dashboard/orders', [DashboardController::class, 'orders'])->name('dashboard.orders');

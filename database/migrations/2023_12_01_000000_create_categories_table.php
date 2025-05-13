@@ -14,11 +14,10 @@ return new class extends Migration
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('slug')->unique();
             $table->text('description')->nullable();
-            $table->unsignedBigInteger('parent_id')->nullable();
-            $table->foreign('parent_id')->references('id')->on('categories')->onDelete('set null');
-            $table->integer('order')->default(0);
             $table->boolean('is_active')->default(true);
+            $table->integer('display_order')->default(0);
             $table->timestamps();
         });
     }

@@ -16,11 +16,15 @@ class Reservation extends Model
      */
     protected $fillable = [
         'user_id',
+        'name',
+        'email',
+        'phone',
         'reservation_date',
         'reservation_time',
-        'guests',
-        'notes',
-        'status'
+        'party_size',
+        'special_requests',
+        'status',
+        'admin_notes'
     ];
 
     /**

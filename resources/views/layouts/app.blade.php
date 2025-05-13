@@ -29,7 +29,9 @@
 
             <!-- Page Content -->
             <main>
-                @isset($slot)
+                @hasSection('content')
+                    @yield('content')
+                @elseif (isset($slot))
                     {{ $slot }}
                 @else
                     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
@@ -37,7 +39,7 @@
                             <p class="text-gray-500">No content available.</p>
                         </div>
                     </div>
-                @endisset
+                @endif
             </main>
         </div>
     </body>

@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                {{ __('My Dashboard') }}
+                {{ __('Dashboard') }}
             </h2>
             <span class="text-sm text-gray-500">Welcome back, {{ Auth::user()->name }}!</span>
         </div>
@@ -18,7 +18,7 @@
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-sm font-medium text-gray-600">My Reservations</p>
-                                <p class="text-3xl font-bold text-amber-600">{{ $reservationsCount }}</p>
+                                <p class="text-3xl font-bold text-amber-600">{{ $reservationsCount ?? 0 }}</p>
                             </div>
                             <div class="p-3 rounded-full bg-amber-500 bg-opacity-10">
                                 <svg class="h-8 w-8 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -40,7 +40,7 @@
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-sm font-medium text-gray-600">My Orders</p>
-                                <p class="text-3xl font-bold text-emerald-600">{{ $ordersCount }}</p>
+                                <p class="text-3xl font-bold text-emerald-600">{{ $ordersCount ?? 0 }}</p>
                             </div>
                             <div class="p-3 rounded-full bg-emerald-500 bg-opacity-10">
                                 <svg class="h-8 w-8 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -139,7 +139,7 @@
                 <div class="p-6 border-b border-gray-200">
                     <h3 class="font-semibold text-lg text-gray-800 mb-4">Recent Reservations</h3>
                     <div class="overflow-x-auto">
-                        @if(isset($recentReservations) && $recentReservations->count() > 0)
+                        @if(isset($recentReservations) && count($recentReservations) > 0)
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-50">
                                     <tr>
@@ -160,7 +160,7 @@
                                                 {{ \Carbon\Carbon::parse($reservation->time)->format('g:i A') }}
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                {{ $reservation->party_size }}
+                                                {{ $reservation->party_size ?? $reservation->guests }}
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 @if($reservation->status == 'confirmed')
@@ -172,28 +172,25 @@
                                                 @endif
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                <a href="{{ route('dashboard.reservations.show', $reservation) }}" class="text-blue-600 hover:text-blue-900 mr-3">View</a>
+                                                <a href="{{ route('dashboard.reservations.show', $reservation->id) }}" class="text-blue-600 hover:text-blue-900 mr-3">View</a>
                                             </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
                             </table>
                         @else
-                            <div class="text-center py-4">
-                                <p class="text-gray-500">You don't have any recent reservations.</p>
-                                <a href="{{ route('dashboard.reservations.create') }}" class="mt-2 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500">
-                                    Make your first reservation
+                            <div class="flex flex-col items-center justify-center py-12 bg-gray-50 rounded-lg">
+                                <svg class="h-16 w-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                                <h3 class="mt-4 text-lg font-medium text-gray-900">No reservations yet</h3>
+                                <p class="mt-1 text-sm text-gray-500">Make your first reservation to enjoy our delicious meals.</p>
+                                <a href="{{ route('dashboard.reservations.create') }}" class="mt-6 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500">
+                                    Make Reservation
                                 </a>
                             </div>
                         @endif
                     </div>
-                    @if(isset($recentReservations) && $recentReservations->count() > 0)
-                        <div class="mt-4">
-                            <a href="{{ route('dashboard.reservations') }}" class="text-amber-600 hover:text-amber-800 text-sm font-medium">
-                                View all reservations →
-                            </a>
-                        </div>
-                    @endif
                 </div>
             </div>
         </div>
