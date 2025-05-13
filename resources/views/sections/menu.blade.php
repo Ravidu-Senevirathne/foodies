@@ -46,7 +46,7 @@
         </div>
         
         <div class="text-center mt-12">
-            <a href="#" class="px-6 py-3 bg-amber-600 text-white font-semibold rounded hover:bg-amber-700 transition">View Full Menu</a>
+            <a href="{{ route('menu') }}" class="px-6 py-3 bg-amber-600 text-white font-semibold rounded hover:bg-amber-700 transition">View Full Menu</a>
         </div>
     </div>
 </section>

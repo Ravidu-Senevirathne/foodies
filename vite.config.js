@@ -6,6 +6,14 @@ export default defineConfig({
         laravel({
             input: ['resources/css/app.css', 'resources/js/app.js'],
             refresh: true,
+            publicDirectory: 'public',
+            buildDirectory: 'build',
+            resolve: {
+                alias: {
+                    '@': '/resources',
+                }
+            },
         }),
     ],
+    assetsInclude: ['**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.gif', '**/*.svg'],
 });
